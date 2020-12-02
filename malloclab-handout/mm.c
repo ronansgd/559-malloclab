@@ -124,7 +124,7 @@ static void *extend_heap(size_t words){
 static void *find_fit(size_t asize){
     /* First fit search */
     void *bp;
-    for(bp==heap_listp; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp))
+    for(bp=heap_listp; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp))
         if(!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) return bp;
     
     return NULL; /* No fit */
@@ -201,6 +201,7 @@ void *mm_malloc(size_t size)
     }
 
     /* No fit found. Get more memory and place the block */
+    extendsize = MAX(asize, CHUNKSIZE);
     if ((bp = extend_heap(extendsize/WSIZE)) == NULL) return NULL;
 
     place(bp, asize);
